@@ -1,3 +1,4 @@
+import sys
 for _ in xrange(int(raw_input())):
     N, M  = raw_input().split()
     result = str(int(N[::-1]) + int(M[::-1]))
