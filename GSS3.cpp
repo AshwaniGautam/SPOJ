@@ -13,22 +13,22 @@ int prefix_sum[300009], suffix_sum[300009], total_sum[300009], solution[300009] 
 int array[55000]    ;
 
 
-void update(int index, int low, int high, int pos){
+void update(int index, int value, int low, int high, int pos){
 
     if (index < low || index > high)
         return  ;
 
     if(low == high){
-        prefix_sum[pos] = array[index]      ;
-        suffix_sum[pos] = array[index]      ;
-        solution[pos]   = array[index]      ;
-        total_sum[pos]  = array[index]      ;
+        prefix_sum[pos] = value    ;
+        suffix_sum[pos] = value    ;
+        solution[pos]   = value    ;
+        total_sum[pos]  = value    ;
         return  ;
     }
 
     int mid = (low+high) / 2    ;
-    update(index, low, mid, 2*pos+1)    ;
-    update(index, mid+1, high, 2*pos+2) ;
+    update(index, value, low, mid, 2*pos+1)    ;
+    update(index, value, mid+1, high, 2*pos+2) ;
 
     total_sum[pos] = total_sum[2*pos+1] + total_sum[2*pos+2]    ;
     solution[pos] = max(max(solution[2*pos+1], solution[2*pos+2]), suffix_sum[2*pos+1]+prefix_sum[2*pos+2])  ;
@@ -78,14 +78,18 @@ int main(){
         scanf("%d", &array[i])  ;
 
     for (int i = 0; i < n; i++){
-        update(i, 0, n-1, 0)    ;
+        update(i, array[i], 0, n-1, 0)    ;
     }
 
     scanf("%d", &m)    ;
     while(m--){
-        scanf("%d %d", &L, &R)  ;
+        scanf("%d %d %d", &type, &L, &R)  ;
+        if (type){
             query(L-1, R-1, 0, n-1, 0, T)  ;
             printf("%d\n", T.solution) ;
+        }
+        else
+            update(L-1, R, 0, n-1, 0)   ;
     }
     return 0    ;
 }
