@@ -10,34 +10,22 @@ Religion and GOD are the only shit between India and Development.
 using namespace std;
 
 vector<pair<int, int> > data;
-int ST[150000]      ;
-int result[50000]   ;
+int ST[40000]      ;
+int result[200009]   ;
 
-void update(int index, int low, int high, int pos){
-
-    if (index > high || index < low)
-        return ;
-    if (low == high){
-        ST[pos] += 1   ;
-        return ;
-    }
-
-    int mid  = (low+high) / 2   ;
-    update(index, low, mid, 2*pos+1)    ;
-    update(index, mid+1, high, 2*pos+2)    ;
-
-    ST[pos] = ST[2*pos+1] + ST[2*pos+2] ;
-    return ;
+void update(int idx, int value, int n){
+    for(; idx <= n; idx += idx & -idx)
+        ST[idx] += value;
 }
 
-int query(int i, int j, int low, int high, int pos){
-    if (low > j || high < i)    return 0    ;
-    if (i <= low && high <= j)        return ST[pos]  ;
-    int mid = (low+high) / 2    ;
-    return (query(i, j, low, mid, 2*pos+1) + query(i, j, mid+1, high, 2*pos+2))  ;
+int query(int idx){
+    int ans = 0   ;
+    for(; idx > 0; idx -= idx & -idx)
+        ans += ST[idx] ;
+    return ans  ;
 }
 
-struct query_data{    int L, R, k, pos  }   ;
+struct query_data{    int L, R, k, pos  ;  }   ;
 bool compare(const query_data &a, const query_data &b){
     return a.k < b.k    ;
 }
@@ -45,9 +33,11 @@ bool compare(const query_data &a, const query_data &b){
 vector<query_data> que;
 
 int main(){
+    ios_base::sync_with_stdio(false);   cin.tie(0)  ;
     int N, M, dummy        ;
     scanf("%d", &N) ;
-    for (int i = 0; i < N; i++){
+    data.push_back(make_pair(0, 0)) ;
+    for (int i = 1; i <= N; i++){
         scanf("%d", &dummy) ;
         data.push_back(make_pair(dummy, i)) ;
         }
@@ -64,14 +54,13 @@ int main(){
     sort(data.begin(), data.end())    ;
     sort(que.begin(), que.end(), compare)   ;
 
-    int K = 0   ;
+    int K = 1   ;
     for (int i = 0; i < M; i++){
-        while(K < N && data[K].first < que[i].k){
-            //cout << data[K].second << data[K].first << que[i].k << endl;
-            update(data[K].second, 0, N-1, 0)  ;
+        while(K <= N && data[K].first <= que[i].k){
+            update(data[K].second, 1, N)  ;
             K++ ;
         }
-        result[que[i].pos] = (que[i].R  - que[i].L + 1) - query(que[i].L-1, que[i].R-1, 0, N-1, 0)    ;
+        result[que[i].pos] = (que[i].R  - que[i].L + 1) - query(que[i].R) + query(que[i].L-1)    ;
     }
 
     for(int i = 0; i < M; i++)
