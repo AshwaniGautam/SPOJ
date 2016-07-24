@@ -112,30 +112,8 @@ int main(){
         if (type){
             printf("%d\n", query(L, R, 0, N-1, 0))  ;
         }
-        else{
+        else
             update(L, R, 0, N-1, 0) ;
-            /*for(int i = 0; i < 7; i++)  {
-                cout << tree[i].ans << " " ;
-            }
-            cout << endl;
-            for(int i = 0; i < 7; i++)  {
-                cout << tree[i].lazy << " " ;
-            }
-            cout << endl;
-            for(int i = 0; i < 7; i++)  {
-                cout << tree[i].mod_1 << " " ;
-            }
-            cout << endl;
-            for(int i = 0; i < 7; i++)  {
-                cout << tree[i].mod_2 << " " ;
-            }
-            cout << endl;
-
-            cout << endl;
-             cout << endl;*/
-            }
-
     }
-
     return 0    ;
 }
