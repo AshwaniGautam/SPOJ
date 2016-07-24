@@ -1,5 +1,5 @@
 /*
-The darkest places in the hell are reserved for those who maintain thier neutrality in times of moreal crisis- Bertrand Zubrist
+The darkest places in the hell are reserved for those who maintain thier neutrality in times of moral crisis- Bertrand Zubrist
 */
 #include<stdio.h>
 #include<iostream>
