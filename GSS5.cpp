@@ -9,7 +9,6 @@ The darkest places in the hell are reserved for those who maintain thier neutral
 using namespace std;
 
 #define INF 1 << 20
-
 int array[10001]	;
 
 struct node{
@@ -82,9 +81,9 @@ void query(int i, int j, int low, int high, int pos, node &T){
 int main(){
 
 	int test, n, q, ans, x1, y1, x2, y2	;
-	cin >> test	;
-	node T 	;
+	scanf("%d", &test)	;
 	ios_base::sync_with_stdio(false);   cin.tie(0)  ;
+
 	while(test--){
 
 		scanf("%d", &n)	;
@@ -111,7 +110,7 @@ int main(){
 				query(x2, y2, 0, n-1, 0, b)		;
 				query(y1+1, x2-1, 0, n-1, 0,c)	;
 
-				cout << a.suffix_sum + b.prefix_sum + c.total	<< "\n";
+				printf("%d\n", a.suffix_sum + b.prefix_sum + c.total)	;
 
 			}
 
@@ -123,9 +122,7 @@ int main(){
 				query(x2,   y1, 0, n-1, 0, b)	;
 				query(y1+1, y2, 0, n-1, 0, c)	;
 
-				ans = max(max(max(a.suffix_sum + b.prefix_sum, b.solution), b.suffix_sum + c.prefix_sum), a.suffix_sum+b.total+c.prefix_sum) 	;
-				
-				cout << ans << "\n"	;
+				printf("%d\n", max(max(max(a.suffix_sum + b.prefix_sum, b.solution), b.suffix_sum + c.prefix_sum), a.suffix_sum + b.total + c.prefix_sum))	;
 
 			}
 
