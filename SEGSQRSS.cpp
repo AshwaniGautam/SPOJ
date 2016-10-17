@@ -18,20 +18,25 @@ void combine(int pos){
 
 	ST[pos].linear_sum = ST[2*pos+1].linear_sum + ST[2*pos+2].linear_sum	;
 	ST[pos].square_sum = ST[2*pos+1].square_sum + ST[2*pos+2].square_sum	;
+	ST[pos].lazy_linear = 0		;
+	ST[pos].lazy_square = 0		;
 	
 }
 
-void pushdown_reset(int low, int high, int pos, long long int value){
+void pushdown_reset(int low, int high, int pos, long long int value_linear, long long int value_square){
 
-	ST[pos].square_sum  = (high - low + 1) * value * value	;
-	ST[pos].linear_sum  = (high - low + 1) * value						;
+	ST[pos].square_sum  = (high - low + 1) * value_square * value_square	;
+	ST[pos].linear_sum  = (high - low + 1) * value_linear			;
 
 	if (high != low){
 
-		ST[2*pos+1].lazy_linear = value	;
-		ST[2*pos+2].lazy_linear = value	; 
-		ST[2*pos+1].lazy_square = 0	;
-		ST[2*pos+2].lazy_square = 0	;
+
+		ST[2*pos+1].square_sum  = -1	;
+		ST[2*pos+2].linear_sum  = -1	;
+		ST[2*pos+1].lazy_linear = value_linear	;
+		ST[2*pos+2].lazy_linear = value_linear	; 
+		ST[2*pos+1].lazy_square = value_square	;
+		ST[2*pos+2].lazy_square = value_square	;
 
 	}
 
@@ -41,17 +46,17 @@ void pushdown_reset(int low, int high, int pos, long long int value){
 
 void pushdown_add(int low, int high, int pos, long long int value){
 
-	ST[pos].square_sum += (value * value * (high - low + 1)) + 2 * value * ST[pos].linear_sum	; 	
 	ST[pos].linear_sum +=  value * (high - low + 1)	;
+	ST[pos].square_sum += (value * value * (high - low + 1)) + 2 * value * ST[pos].linear_sum	; 	
 
 	if (low != high){
 
 		int mid = (low+high) / 2	;
-		if (ST[2*pos+1].lazy_linear)
-			pushdown_reset(low, mid, 2*pos + 1, ST[pos].lazy_linear)	;
+		if (ST[2*pos+1].square_sum == -1)
+			pushdown_reset(low, mid, 2*pos + 1, ST[pos].lazy_linear, ST[pos].lazy_square)	;
 		
-		if (ST[2*pos+2].lazy_linear)
-			pushdown_reset(mid+1, high, 2*pos + 2, ST[pos].lazy_linear)	;
+		if (ST[2*pos+2].square_sum == -1)
+			pushdown_reset(mid+1, high, 2*pos + 2, ST[pos].lazy_linear, ST[pos].lazy_square)	;
 
 		ST[2*pos+1].lazy_square += value	;
 		ST[2*pos+2].lazy_square += value	;
@@ -59,7 +64,7 @@ void pushdown_add(int low, int high, int pos, long long int value){
 	}
 
 	ST[pos].lazy_square  =	0	;
-
+	ST[pos].lazy_linear  =  0	;
 }
 
 void build(int low, int high, int pos){
@@ -80,21 +85,21 @@ void build(int low, int high, int pos){
 
 	combine(pos)	;
 	
-	ST[pos].lazy_linear = 0		;
-	ST[pos].lazy_square = 0		;
-
 }
 
 void update_reset(int i, int j, int low, int high, int pos, long long int value){
 
-	if (ST[pos].lazy_linear)
-		pushdown_reset(low, high, pos, ST[pos].lazy_linear)	;
+	if (ST[pos].square_sum == -1)
+		pushdown_reset(low, high, pos, ST[pos].lazy_linear, ST[pos].lazy_square)	;
+
+	if (ST[pos].lazy_square)
+		pushdown_add(low, high, pos, ST[pos].lazy_square)	;
 
 	if (j < low || i > high)
 		return;
 
 	if (i <= low && high <= j){
-		pushdown_reset(low, high, pos, value)	;
+		pushdown_reset(low, high, pos, value, value)	;
 		return;
 	}
 
@@ -108,8 +113,8 @@ void update_reset(int i, int j, int low, int high, int pos, long long int value)
 
 void update_add(int i, int j, int low, int high, int pos, long long int value){
 
-	if (ST[pos].lazy_linear)
-		pushdown_reset(low, high, pos, ST[pos].lazy_linear)	;
+	if (ST[pos].square_sum == -1)
+		pushdown_reset(low, high, pos, ST[pos].lazy_linear, ST[pos].lazy_square)	;
 
 	if (ST[pos].lazy_square)
 		pushdown_add(low, high, pos, ST[pos].lazy_square)	;
@@ -132,8 +137,8 @@ void update_add(int i, int j, int low, int high, int pos, long long int value){
 
 int query(int i, int j, int low, int high, long long int pos){
 
-	if (ST[pos].lazy_linear)
-		pushdown_reset(low, high, pos, ST[pos].lazy_linear)	;
+	if (ST[pos].square_sum == -1)
+		pushdown_reset(low, high, pos, ST[pos].lazy_linear, ST[pos].lazy_square)	;
 
 	if (ST[pos].lazy_square)
 		pushdown_add(low, high, pos, ST[pos].lazy_square)	;
