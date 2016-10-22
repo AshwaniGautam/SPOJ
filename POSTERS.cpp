@@ -86,7 +86,7 @@ int main(){
 		}
 		
 		unique(0, N-1, 0)	;
-		printf("%d\n", mymap.size());
+		cout << mymap.size()-1 ;
 	}
 
 	return 0	;
