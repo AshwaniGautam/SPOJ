@@ -2,14 +2,13 @@
 #include <string.h>
 #include <iostream>
 #include <vector>
-#define INF 1 << 30
-#define MAXN 10010
+#define MAXN 10001
 using namespace std;
 
 
 vector <int> graph[MAXN], cost[MAXN], edges[MAXN]	;
 int L[MAXN], HEAD[MAXN], parent[MAXN], subtree[MAXN], array[MAXN], ST[MAXN << 2], location[MAXN]	;
-int pos =-1, N;
+int pos =0, N;
 
 
 void build(int pos, int low, int high){
@@ -28,7 +27,7 @@ void build(int pos, int low, int high){
 int query(int i, int j, int low, int high, int pos){
 
 	if (j < low  || i > high)
-		return -INF;
+		return -1;
 	if (i <= low && high <= j){
 		return ST[pos]	;
 	}
@@ -69,7 +68,7 @@ void  dfs(int v, int pv){
 
 void HLD(int v, int pv, int value){
 
-	if (HEAD[v] == 0)
+	if (HEAD[v] == -1)
 		HEAD[v] = v 	;
 	else
 		HEAD[v] = HEAD[pv]	;
@@ -77,12 +76,8 @@ void HLD(int v, int pv, int value){
 	int maxsubtree = 0;
 	int Cost;
 	int Special = -1;
-	if(pos >= 0){
-		array[pos] = value;
-		if (location[v] == -1)
-			location[v] = pos	;
-	}
-	pos++;
+	location[v] = pos	;
+	array[pos++] = value;
 
 	for(int i = 0; i < graph[v].size(); i++){ if (graph[v][i] != pv){
 
@@ -107,26 +102,19 @@ void HLD(int v, int pv, int value){
 
 }
 
-
 int LCA(int i, int j){
 
 	while(HEAD[i] != HEAD[j]){
 
-		if (L[j] > L[i]) swap(i, j) ;
-		i = parent[HEAD[i]]	;
-
+		if (L[HEAD[j]] > L[HEAD[i]])
+			j = parent[HEAD[j]]	;
+		else
+			i = parent[HEAD[i]]	;
 	}
 
 	if (L[j] > L[i])
 		return i ;
 	return j;
-}
-
-void print(int *array, int n){
-
-	for(int i = 0; i < n; i++)
-		printf("%d ", array[i])	;
-	printf("\n")	;
 }
 
 int query_up(int i, int lca){
@@ -138,11 +126,11 @@ int query_up(int i, int lca){
 
 		if (HEAD[i] == HEAD[lca]){
 
-			maximum = max(maximum, query(location[lca]+1, location[i], 0, N-2, 0))	;
+			maximum = max(maximum, query(location[lca]+1, location[i], 0, N-1, 0))	;
 			break;
 		}
 
-		maximum = max(maximum, query(location[HEAD[i]], location[i], 0, N-2, 0))	;
+		maximum = max(maximum, query(location[HEAD[i]], location[i], 0, N-1, 0))	;
 		i = parent[HEAD[i]]	;
 	}
 
@@ -159,16 +147,16 @@ int main(){
 	while(t--){
 
 		scanf("%d", &N)	;
-		pos = -1;
+		pos = 0;
 
-		for (int i = 0; i <= N; i++){
+		for (int i = 0; i <= MAXN; i++){
 			graph[i].clear()	;
 			cost[i].clear()		;
 			edges[i].clear()	;
-			location[i] = -1	;
 		}
 		memset(HEAD, 0, sizeof(HEAD))	;
-
+		memset(ST, 0, sizeof(ST))	;
+		HEAD[1] = -1	;
 		for (int i = 1; i < N; i++){
 
 			scanf("%d %d %d", &u, &v, &value)	;
@@ -183,7 +171,7 @@ int main(){
 
 		dfs(1, 0)	;
 		HLD(1, 0, 0)		;
-		build(0, 0, N-2)	;
+		build(0, 0, N-1)	;
 
 		while(1){
 			int n, m ;
@@ -208,10 +196,8 @@ int main(){
 						node = edges[n][0];
 					else
 						node = edges[n][1]	;
-					update(location[node], 0, N-2, 0, m)	;
+					update(location[node], 0, N-1, 0, m)	;
 				}
-			else
-				break;
 		}
 
 	}
