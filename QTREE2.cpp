@@ -110,7 +110,6 @@ void hld(int v, int pv, int value){
 
 long long int query_up(int a, int lca){
 
-
 	long long int distance = 0;
 
 	while(1){
@@ -130,15 +129,8 @@ long long int query_up(int a, int lca){
 	return distance	;
 }
 
-void print(int * array, int N){
-
-	for (int i = 0; i < N; i++)
-		printf("%d ", array[i]);
-	printf("\n")	;
-}
-
 int main(){
-
+	ios_base::sync_with_stdio(false);   cin.tie(0)  ;
 	int t;
 	int u, v, value, a, b, k, node;
 	char M[15]	;
@@ -166,6 +158,7 @@ int main(){
 			edges[i].push_back(v)	;
 
 		}
+		
 		memset(ST, 0, sizeof(ST))	;
 		memset(HEAD, 0, sizeof(HEAD))	;
 		HEAD[1] = -1;
