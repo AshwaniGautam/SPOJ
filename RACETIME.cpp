@@ -1,6 +1,7 @@
 #include<bits/stdc++.h>
 
 /*
+    Precomputation: O(NlogN)
     Query : O(ROOT(N) * log(N))
     Update : O(ROOT(N))
 
